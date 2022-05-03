@@ -1,0 +1,180 @@
+---
+title: "Pymol_Comands"
+author: "Sanjiv Kumar"
+date: '2022-05-03'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{pymol}
+
+# Tutorials 
+# TOC https://pymolwiki.org/index.php/TOPTOC
+# http://dx.doi.org/10.13140/RG.2.2.33676.64641
+# http://pymol.sourceforge.net/newman/user/S0220commands.html
+
+# Youtube 
+# https://www.youtube.com/watch?v=mBlMI82JRfI&list=PLUMhYZpMLtal_Z7to3by2ATHP-cI4ma5X&ab_channel=MolecularMemory
+# https://www.youtube.com/playlist?list=PLwou46-vQBXNi7vBvWch4W2z2nwr8I55r
+
+# Scripts Library 
+# https://pymolwiki.org/index.php/Category:Script_Library
+# https://github.com/jaredsampson/pymol-scripts
+# https://github.com/Pymol-Scripts/Pymol-script-repo
+# To load/download plugin, just add the wiki url to plugin
+
+
+# Set Name
+set_name old_name, new_name
+
+# Navigation
+pwd # present working directory 
+
+# Selection_Algebra https://pymolwiki.org/index.php/Selection_Algebra
+
+remove (sele) # to remove selection
+
+# Property_Selectors https://pymolwiki.org/index.php/Property_Selectors
+
+#  SURFACE https://pymolwiki.org/index.php/Surface
+show surface, SEL
+set transparency, 0.5
+set surface_quality, 1 # or higher if you wish, though it will take longer and might look odd.
+
+# LABEL
+# if Python is configured with utf-8 default encoding (all incentive builds)
+label  5/CA, u"\u03b1-Helix"
+label 10/CA, u"\u03b2-Sheet"
+
+# if Python is configured differently, explicit utf-8 encoding is necessary
+label  5/CA, u"\u03b1-Helix".encode("utf-8")
+label 10/CA, u"\u03b2-Sheet".encode("utf-8")
+
+# italic
+set label_font_id, 16
+set label_font_id, 10 # set lable fonts, see here https://pymolwiki.org/index.php/Label_font_id
+
+
+# make bigger
+set label_size, 30
+
+# color
+set label_color, purpleblue # to change the color of the labels
+set label_outline_color, chocolate
+
+# cast shadows in ray tracing
+set label_shadow_mode, 3
+
+# simple example: label residue 22's atoms with their names
+label i. 22, name
+
+# Label residue #44's alpha carbon with it's residue name, residue number and B-factor.
+label n. CA and i. 44, "(%s, %s, %s)" % (resn, resi, b)
+
+# Move Label position https://pymolwiki.org/index.php/Label
+set label_position,(3,2,1) # Offsets the labels 3 Å in X, 2 in Y and 1 in Z, relative to the Viewport. Can be useful if spheres needs labeling
+
+# enter edit_mode and ctrl-left_click to drag labels around; ctrl-shift-left_click will let you move the labels in the z-direction.
+
+# make a very simple label on the 14th alpha carbon.
+label n. CA and i. 14, "This is carbon 14."
+label n. CA and i. 3, "C5-chain"
+
+
+# ZOOM
+# auto zoom depending on what's loaded in PyMOL
+zoom
+
+#
+zoom complete=1
+
+# zoom on just chain A
+zoom (chain A)
+
+# zoom on residue 142
+zoom 142/
+
+# zoom consistenly 20 Ang from each object at the center
+center prot1
+zoom center, 20
+
+# prot1 and prot2 will have the same exact zoom factor
+center prot2
+zoom center, 20
+
+# Background color 
+bg_color white
+
+# Fog, The ray_trace_fog setting forces PyMol to render fog over objects further from the camera. This adds a sense of depth and brings the attention to foreground objects.
+
+set ray_trace_fog, 0  # off
+set ray_trace_fog, 1  # on
+
+# Shadows
+set ray_shadows,0   # turn off shadows
+set ray_shadows,1   # turn on shadows
+
+# RAY
+# ray trace the current scene, but scaled to 1024x768 pixels
+ray 1800, 1200
+
+
+cartoon_side_chain_helper, on # to remove extra side chain in cartoon and sticks view of a residue
+
+# Command to create colorblind-friendly images (if you want the background black, change the first line to say “black” instead of “white”): PYMOL>
+bg_color white
+set antialias=1
+set orthoscopic=1
+set gamma=1.15
+set cartoon_fancy_helices, 1
+set cartoon_fancy_sheets, 1
+set_color wred, [0.788,0.000,0.140]
+set_color wblue, [0.31,0.506,0.686]
+set_color wgold, [0.855,0.647,0.125]
+set_color wgreen, [0.134,0.545,0.134]
+set_color wgray, [0.800,0.800,0.800]
+set_color wrose, [0.65,0.47,0.55]
+set_color wpurple, [0.37,0.31,0.62]
+set_color mpurple, [0.75,0.57,0.80]
+set_color mpgrey, [0.73,0.68,0.82]
+set ray_shadows, 0
+set ray_trace_fog, 1
+
+# Run this to generate figure, all combined, hide which you don't need 
+hide lines;
+show cartoon;
+set ray_trace_mode, 3; # color
+bg_color white; # Background color to white 
+set antialias, 2  # higher setting, better image quality
+# Surface
+show surface, all
+set transparency, 0.6
+set surface_quality, 2
+ray 1800, 1200
+png filename.png
+
+# Working 
+show sticks, resid 1
+label n. CA and i. 1, "%s-%s" % (resn, resi)
+label n. CA and i. 16, "%s-%s" % (resn, resi)
+label n. CA and i. 2, "C5-chain"
+label  6/CA, u"\u03b1-Helix"
+set label_font_id, 16
+set label_position,(0, 0, 15)
+bg_color white
+show surface, all
+set transparency, 0.6
+set surface_quality, 2
+set label_size, 40
+# set ray_shadows,0   # turn off shadows
+set antialias, 2
+# set ray_trace_mode, 3
+ray 1800, 1200
+png filename.png
+
+
+```
+
